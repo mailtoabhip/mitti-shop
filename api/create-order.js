@@ -30,10 +30,11 @@ module.exports = async function handler(req, res) {
     phone: clean(c.phone, 20),
     email: clean(c.email, 100),
     address: clean(c.address, 250),
+    city: clean(c.city, 60),
     pincode: clean(c.pincode, 10),
   };
-  if (!customer.name || !/^\+?[0-9 ]{10,15}$/.test(customer.phone) || !customer.address || !/^[0-9]{6}$/.test(customer.pincode)) {
-    return res.status(400).json({ error: "Please fill in your name, a valid phone number, address and 6-digit pincode." });
+  if (!customer.name || !/^\+?[0-9 ]{10,15}$/.test(customer.phone) || !customer.address || !customer.city || !/^[0-9]{6}$/.test(customer.pincode)) {
+    return res.status(400).json({ error: "Please fill in your name, a valid phone number, address, city and 6-digit pincode." });
   }
 
   const summary = cart.lines.map((l) => `${l.name} x${l.qty}`).join(", ");
@@ -51,10 +52,13 @@ module.exports = async function handler(req, res) {
         receipt: "order_" + Date.now(),
         notes: {
           items: summary.slice(0, 256),
+          // machine-readable cart, used to create the Shopify order: "petite:1,grand:2"
+          cart: cart.lines.map((l) => `${l.id}:${l.qty}`).join(","),
           customer_name: customer.name,
           customer_phone: customer.phone,
           customer_email: customer.email,
           address: customer.address,
+          city: customer.city,
           pincode: customer.pincode,
         },
       }),

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Mitti &amp; Co. — Flower Pots</title>
-<meta name="description" content="Flower pots at ₹199, ₹299 and ₹399. Pay securely with UPI, cards or netbanking.">
+<meta name="description" content="Flower pots from ₹1. Pay securely with UPI, cards or netbanking.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -95,6 +95,7 @@
           <label>Full name<input name="name" autocomplete="name" required maxlength="100"></label>
           <label>Phone<input name="phone" type="tel" autocomplete="tel" inputmode="tel" required placeholder="10-digit mobile"></label>
           <label>Email (optional)<input name="email" type="email" autocomplete="email" maxlength="100"></label>
+          <label>City<input name="city" autocomplete="address-level2" required maxlength="60"></label>
           <label>Pincode<input name="pincode" inputmode="numeric" autocomplete="postal-code" required maxlength="6" pattern="[0-9]{6}"></label>
           <label class="full">Delivery address<textarea name="address" rows="3" autocomplete="street-address" required maxlength="250"></textarea></label>
           <p id="error" class="msg full" style="grid-column:1/-1" hidden></p>
@@ -114,7 +115,7 @@
 (function () {
   // Display data only. The real prices are checked on the server (lib/products.js).
   var PRODUCTS = [
-    { id: "petite",  name: "Petite",  price: 199, blurb: "A small pot for succulents, herbs and desk plants.",      color: "#C2643F", rim: "#A9532F", tint: "#F6E6DD", w: 96,  h: 104 },
+    { id: "petite",  name: "Petite",  price: 1, blurb: "A small pot for succulents, herbs and desk plants.",      color: "#C2643F", rim: "#A9532F", tint: "#F6E6DD", w: 96,  h: 104 },
     { id: "classic", name: "Classic", price: 299, blurb: "Our everyday pot for windowsills and balconies.",          color: "#7E8F4E", rim: "#69793E", tint: "#E8EDDB", w: 128, h: 139 },
     { id: "grand",   name: "Grand",   price: 399, blurb: "A roomy pot for bigger plants that need space to grow.", color: "#3E4E6B", rim: "#2F3D57", tint: "#E1E6EF", w: 160, h: 173 }
   ];
@@ -187,10 +188,10 @@
     var f = e.target;
     var customer = {
       name: f.name.value.trim(), phone: f.phone.value.trim(), email: f.email.value.trim(),
-      address: f.address.value.trim(), pincode: f.pincode.value.trim()
+      address: f.address.value.trim(), city: f.city.value.trim(), pincode: f.pincode.value.trim()
     };
-    if (!customer.name || !/^\+?[0-9 ]{10,15}$/.test(customer.phone) || !customer.address || !/^[0-9]{6}$/.test(customer.pincode)) {
-      showError("Please fill in your name, a valid phone number, address and 6-digit pincode.");
+    if (!customer.name || !/^\+?[0-9 ]{10,15}$/.test(customer.phone) || !customer.address || !customer.city || !/^[0-9]{6}$/.test(customer.pincode)) {
+      showError("Please fill in your name, a valid phone number, address, city and 6-digit pincode.");
       return;
     }
     if (typeof Razorpay === "undefined") { showError("The payment window didn't load. Check your connection and refresh the page."); return; }
@@ -210,7 +211,7 @@
         name: "Mitti & Co.",
         description: "Flower pots",
         prefill: { name: customer.name, contact: customer.phone, email: customer.email },
-        notes: { address: customer.address, pincode: customer.pincode },
+        notes: { address: customer.address, city: customer.city, pincode: customer.pincode },
         theme: { color: "#2F5D3A" },
         modal: { ondismiss: function () { setBusy(false); } },
         handler: function (resp) {
