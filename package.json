@@ -1,0 +1,9 @@
+{
+  "name": "mitti-shop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Flower pot shop with Razorpay checkout, deployed on Vercel",
+  "engines": {
+    "node": ">=18"
+  }
+}
